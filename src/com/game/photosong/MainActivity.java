@@ -1,5 +1,6 @@
 package com.game.photosong;
 
+import java.io.File;
 import java.io.FileOutputStream;
 
 import android.os.Bundle;
@@ -8,13 +9,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+
 
 
 public class MainActivity extends Activity {
@@ -27,17 +31,16 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//ÒşÈ¥±êÌâÀ¸£¨Ó¦ÓÃ³ÌĞòµÄÃû×Ö£©  
+		//éšå»æ ‡é¢˜æ ï¼ˆåº”ç”¨ç¨‹åºçš„åå­—ï¼‰  
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //ÒşÈ¥×´Ì¬À¸²¿·Ö(µç³ØµÈÍ¼±êºÍÒ»ÇĞĞŞÊÎ²¿·Ö)
+        //éšå»çŠ¶æ€æ éƒ¨åˆ†(ç”µæ± ç­‰å›¾æ ‡å’Œä¸€åˆ‡ä¿®é¥°éƒ¨åˆ†)
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        
 		setContentView(R.layout.activity_main);
 		button_menu = (ImageButton)findViewById(R.id.button_menu);
 		button_menu.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_draw));
 		status = 1;
 		isSaved = true;
-		
 		button_menu.setOnClickListener(new Button.OnClickListener(){ 
 			@Override 
 	        public void onClick(View v) {  
@@ -64,70 +67,65 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		// ±£´æ¡¢ÍË³ö¡¢²¥·Å¡¢²¥·ÅÕûÇú
-	    menu.add(1, 1, 1, "²¥·Åµ±Ç°");
-	    menu.add(1, 2, 2, "²¥·ÅÕûÇú");
-		menu.add(2, 3, 3, "±£´æ");
-	    menu.add(2, 4, 4, "ÀúÊ·");
-	    menu.add(2, 5, 5, "ÍË³ö");
+		// ä¿å­˜ã€é€€å‡ºã€æ’­æ”¾ã€æ’­æ”¾æ•´æ›²
+	    menu.add(1, 1, 1, "æ’­æ”¾å½“å‰");
+	    menu.add(1, 2, 2, "æ’­æ”¾æ•´æ›²");
+		menu.add(2, 3, 3, "ä¿å­˜");
+	    menu.add(2, 4, 4, "å†å²");
 		return true;
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {  
-		//ÌáĞÑÓÃ»§×ö±£´æµÄÊÂÇéµÄÒ»¸ö¿ò
-		//¶Ô»°¿ò   BuilderÊÇAlertDialogµÄ¾²Ì¬ÄÚ²¿Àà  
+		//æé†’ç”¨æˆ·åšä¿å­˜çš„äº‹æƒ…çš„ä¸€ä¸ªæ¡†
+		//å¯¹è¯æ¡†   Builderæ˜¯AlertDialogçš„é™æ€å†…éƒ¨ç±»  
 		Dialog dialog = new AlertDialog.Builder(MainActivity.this)  
-			//ÉèÖÃ¶Ô»°¿òµÄ±êÌâ  
-			.setTitle("°¥Ñ½Ñ½»¹Ã»±£´æ¾ÍÏëÍË³ö£¿")  
-			//ÉèÖÃ¶Ô»°¿òÒªÏÔÊ¾µÄÏûÏ¢  
-			.setMessage("µ±Ç°ÇúÄ¿ÊÇ·ñ±£´æ£¿")  
-			//ÉèÖÃ°´Å¥
-			.setPositiveButton("Ö±½ÓÍË³ö", new DialogInterface.OnClickListener(){  
+			//è®¾ç½®å¯¹è¯æ¡†çš„æ ‡é¢˜  
+			.setTitle("å“å‘€å‘€è¿˜æ²¡ä¿å­˜å°±æƒ³é€€å‡ºï¼Ÿ")  
+			//è®¾ç½®å¯¹è¯æ¡†è¦æ˜¾ç¤ºçš„æ¶ˆæ¯  
+			.setMessage("å½“å‰æ›²ç›®æ˜¯å¦ä¿å­˜ï¼Ÿ")  
+			//è®¾ç½®æŒ‰é’®
+			.setPositiveButton("ç›´æ¥é€€å‡º", new DialogInterface.OnClickListener(){  
 				public void onClick(DialogInterface dialog, int which) {  
-					//ºÃÏñÊ²Ã´¶¼²»ÓÃ¸É
+					//å¥½åƒä»€ä¹ˆéƒ½ä¸ç”¨å¹²
 				}  
 			})
-			.setNegativeButton("±£´æ²¢ÍË³ö", new DialogInterface.OnClickListener(){  
+			.setNegativeButton("ä¿å­˜å¹¶é€€å‡º", new DialogInterface.OnClickListener(){  
 				public void onClick(DialogInterface dialog, int which) {  
-					//±£´æÓ¦¸Ã×öµÄÊÂ
-					sdCardPath = Environment.getExternalStorageDirectory().getPath();
-					String fileName = "";
-					//FileOutputStream out = this.openFileOutput(sdCardPath + "/" + fileName, Mode_);
-  			
-  			
-				}  
+					//ä¿å­˜åº”è¯¥åšçš„äº‹
+					;
+				}
 			})
 			.setCancelable(true).create();
-		
-		// ÔÚ´ËËµÃ÷Ò»ÏÂ£¬MenuÏàµ±ÓÚÒ»¸öÈİÆ÷£¬¶øMenuItemÏàµ±ÓÚÈİÆ÷ÖĞÈİÄÉµÄ¶«Î÷ 
+
+		// åœ¨æ­¤è¯´æ˜ä¸€ä¸‹ï¼ŒMenuç›¸å½“äºä¸€ä¸ªå®¹å™¨ï¼Œè€ŒMenuItemç›¸å½“äºå®¹å™¨ä¸­å®¹çº³çš„ä¸œè¥¿ 
 		switch(item.getItemId()) { 
 			case 1: 
-				setTitle("²¥·Åµ±Ç°"); 
+				setTitle("æ’­æ”¾å½“å‰"); 
 				break; 
 			case 2: 
-				setTitle("²¥·ÅÕûÇú"); 
+				setTitle("æ’­æ”¾æ•´æ›²"); 
 				break; 
 			case 3: 
-				//±£´æÓ¦¸Ã×öµÄÊÂ
+				//ä¿å­˜åº”è¯¥åšçš„äº‹
 				
 				
 				break; 
 			case 4: 
 				if (isSaved == false) {
-					dialog.show();//ÏÔÊ¾Ò»°Ñ 
+					dialog.show();//æ˜¾ç¤ºä¸€æŠŠ 
 				}
-				//µ÷ÎÄ¼şÏµÍ³£¬ÕÒ³öÎÄ¼ş
+				//è°ƒæ–‡ä»¶ç³»ç»Ÿï¼Œæ‰¾å‡ºæ–‡ä»¶
 				
 				
-				//´ÓÎÄ¼şÖĞ»Ö¸´
+				//ä»æ–‡ä»¶ä¸­æ¢å¤
 				
 				
 				break; 
 			case 5: 
 				if (isSaved == false) {
-					dialog.show();//ÏÔÊ¾Ò»°Ñ 
+					dialog.show();//æ˜¾ç¤ºä¸€æŠŠ 
 				}
-		        //Çå¿Õ»º´æÖ®ÀàµÄ
+		        //æ¸…ç©ºç¼“å­˜ä¹‹ç±»çš„
       			
       			
       			
