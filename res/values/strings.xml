@@ -11,5 +11,11 @@
     <string name="action_history">历史曲目</string>
     <string name="action_import">导入图片</string>
     <string name="action_export">导出曲目</string>
+    <string name="button_color">button used for change color</string>
+    <string name="button_menu">button used for change status</string>
+    <string name="button_undo">button used for undo</string>
+    <string name="prompt_status_eraser">现在点击想要去掉的曲线即可整条删除</string>
+    <string name="prompt_status_voice">点击线条，然后可调整该线音量</string>
+    <string name="prompt_status_draw">开始在屏幕上作画吧！右下角色块选择“音&amp;色”~</string>
 
 </resources>
